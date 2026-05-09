@@ -1,4 +1,3 @@
-````markdown
 # Homework #3 — Simple DL Workflow on Kubeflow (GKE)
 
 **Author:** Aashir Khan
@@ -307,4 +306,3 @@ In `screenshots/`:
 **10.3 NumPy missing from slim inference image.** `infer:v1` returned HTTP 500 with `RuntimeError: Numpy is not available` from inside `transforms.ToTensor()`. The slim Python base lacks numpy, and the CPU torchvision wheel doesn't pull it as a hard dep. Fixed with `pip install "numpy<2"` (numpy 2.x has ABI breaks with torch 2.1), rebuilt as `infer:v2`, and rolled out via `kubectl set image`.
 
 **10.4 Cloud Shell ↔ Artifact Registry network flakiness.** Direct `docker push` repeatedly failed with `connection refused`. Switching to `gcloud builds submit` ran the build and push entirely on Google infrastructure and worked first try.
-````
