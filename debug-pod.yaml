@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: debug
+  namespace: mnist
+spec:
+  containers:
+  - name: debug
+    image: busybox
+    command: ["sleep", "3600"]
+    volumeMounts:
+    - name: model-vol
+      mountPath: /mnt/model
+  volumes:
+  - name: model-vol
+    persistentVolumeClaim:
+      claimName: model-pvc

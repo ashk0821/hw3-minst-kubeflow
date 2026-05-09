@@ -1,0 +1,7 @@
+FROM pytorch/pytorch:2.1.0-cuda11.8-cudnn8-runtime
+WORKDIR /app
+RUN pip install --no-cache-dir torchvision
+COPY train.py .
+# Pre-download MNIST so the training pod (no internet) can read it from disk
+RUN python -c "from torchvision import datasets; datasets.MNIST('/tmp/data', train=True, download=True)"
+CMD ["python", "train.py"]

@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mnist-infer
+  namespace: mnist
+  labels:
+    app: mnist-infer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mnist-infer
+  template:
+    metadata:
+      labels:
+        app: mnist-infer
+    spec:
+      containers:
+      - name: infer
+        image: us-central1-docker.pkg.dev/kubeflow-hw3/mnist-images/infer:v1
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        volumeMounts:
+        - name: model-vol
+          mountPath: /mnt/model
+          readOnly: true
+      volumes:
+      - name: model-vol
+        persistentVolumeClaim:
+          claimName: model-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mnist-infer-svc
+  namespace: mnist
+spec:
+  type: LoadBalancer
+  selector:
+    app: mnist-infer
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080

@@ -1,0 +1,22 @@
+apiVersion: kubeflow.org/v1
+kind: PyTorchJob
+metadata:
+  name: mnist-train
+  namespace: mnist
+spec:
+  pytorchReplicaSpecs:
+    Master:
+      replicas: 1
+      restartPolicy: OnFailure
+      template:
+        spec:
+          containers:
+          - name: pytorch
+            image: us-central1-docker.pkg.dev/kubeflow-hw3/mnist-images/train:v1
+            volumeMounts:
+            - name: model-vol
+              mountPath: /mnt/model
+          volumes:
+          - name: model-vol
+            persistentVolumeClaim:
+              claimName: model-pvc
